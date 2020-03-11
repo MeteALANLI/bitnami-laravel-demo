@@ -1,0 +1,35 @@
+version : '3'
+networks:
+  laravel:
+services:
+  mysql:
+    image: 'bitnami/mysql:5.7'
+    container_name: mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=my_user
+      - MYSQL_DATABASE=my_database
+      - MYSQL_PASSWORD=my_password
+      - MYSQL_ROOT_PASSWORD= secret
+    networks:
+      - laravel
+  php:
+    tty: true
+    image: bitnami/laravel:6-debian-9
+    environment:
+      - DB_HOST=mysql
+      - DB_USERNAME=my_user
+      - DB_DATABASE=my_database
+      - DB_PASSWORD=my_password
+    depends_on:
+      - mysql
+    volumes:
+      - ./src:/app
+    ports:
+      - 3000:3000
+    networks:
+      - laravel
